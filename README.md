@@ -1,8 +1,27 @@
-# Ultrasonic Radar Scanner
+# 🔭 Ultrasonic Radar Scanner
 
-A DIY Arduino-based ultrasonic radar and security monitoring system using an HC-SR04 ultrasonic sensor mounted on an SG90 servo. A Python desktop application visualizes the scan as a radar display and provides operator controls.
+A DIY Arduino-based ultrasonic radar and security monitoring system built around an **HC-SR04 ultrasonic sensor**, an **SG90 servo**, and an **Arduino UNO R3**. A Python desktop application turns the sensor readings into a live radar-style display with target tracking, alarms, and operator controls.
 
-## Current Features
+> **Current milestone:** Functional desktop ultrasonic radar/security prototype.
+
+## 📸 Physical Build
+
+The radar is built as a simple, no-solder breadboard prototype. The HC-SR04 is mounted on the SG90 servo so the sensor can sweep across the detection area.
+
+<table>
+<tr>
+<td width="50%"><img src="./Ultrasonic%20Sensor%201.jpeg" alt="Ultrasonic Radar physical build 1" width="100%"></td>
+<td width="50%"><img src="./Ultrasonic%20Sensor%202.jpeg" alt="Ultrasonic Radar physical build 2" width="100%"></td>
+</tr>
+</table>
+
+## 🎥 Project Demo
+
+A full demonstration video has been recorded and will be linked here once it is hosted externally. The original video is approximately **600 MB**, so it is kept outside the GitHub repository rather than adding it as a normal repository file.
+
+**Full demo:** Coming soon
+
+## ✨ Features
 
 - 0–180° servo scanning
 - Configurable scan start/end angles
@@ -21,7 +40,7 @@ A DIY Arduino-based ultrasonic radar and security monitoring system using an HC-
 - Home position at 90°
 - Keyboard and GUI controls
 
-## Hardware
+## 🧰 Hardware
 
 - Arduino UNO R3
 - HC-SR04 ultrasonic sensor
@@ -31,7 +50,7 @@ A DIY Arduino-based ultrasonic radar and security monitoring system using an HC-
 - USB cable
 - Windows PC running Python
 
-## Wiring
+## 🔌 Wiring
 
 ### HC-SR04
 
@@ -42,7 +61,7 @@ A DIY Arduino-based ultrasonic radar and security monitoring system using an HC-
 | TRIG | D7 |
 | ECHO | D6 |
 
-### SG90
+### SG90 Servo
 
 | Servo | Arduino UNO |
 |---|---|
@@ -50,7 +69,73 @@ A DIY Arduino-based ultrasonic radar and security monitoring system using an HC-
 | Red | 5V |
 | Orange/Yellow | D9 |
 
-## Arduino Serial Protocol
+## 🗂️ Project Structure
+
+```text
+ultrasonic-radar-scanner/
+├── Arduino/
+│   └── UltrasonicRadar.ino
+├── PC_Radar/
+│   └── radar.py
+├── Ultrasonic Sensor 1.jpeg
+├── Ultrasonic Sensor 2.jpeg
+├── README.md
+└── requirements.txt
+```
+
+## ⚙️ How It Works
+
+1. The SG90 rotates the HC-SR04 through the configured scan range.
+2. At each angle, the ultrasonic sensor takes three readings and averages valid results.
+3. Arduino sends `angle,distance` measurements over USB serial.
+4. Python receives the measurements and renders the radar display.
+5. The software groups nearby sequential detections into persistent target tracks.
+6. Targets are assigned IDs and their movement is estimated from distance changes.
+7. Close targets trigger warning/critical states and an audible PC alarm.
+8. The operator can pause, resume, adjust the scan, or lock the servo onto a target.
+
+## 🖥️ Python Radar Application
+
+The desktop application uses **Tkinter** for the interface and **PySerial** for communication with the Arduino.
+
+Install the dependency:
+
+```bash
+pip install -r requirements.txt
+```
+
+Then run the application from the `PC_Radar` directory:
+
+```bash
+cd PC_Radar
+python radar.py
+```
+
+The current PC configuration expects the Arduino on **COM6** at **115200 baud**.
+
+> Close Arduino Serial Monitor or any other program using COM6 before starting the Python application.
+
+## 🎮 Controls
+
+The application supports GUI controls and keyboard shortcuts.
+
+| Control | Function |
+|---|---|
+| ▶ PLAY | Resume scanning |
+| ⏸ PAUSE | Pause scanning |
+| 🎯 LOCK TARGET | Lock onto a selected target |
+| ◀ LEFT 5° | Move sensor left |
+| 🏠 HOME 90° | Return to center |
+| RIGHT 5° ▶ | Move sensor right |
+| Space | Play/Pause |
+| P | Pause |
+| R | Resume |
+| L | Left |
+| D | Right |
+| H | Home |
+| T | Target lock |
+
+## 📡 Arduino Serial Protocol
 
 The Arduino communicates at **115200 baud**.
 
@@ -75,48 +160,23 @@ Q5
 A120
 ```
 
-## Python Radar Application
+## 🚨 Detection & Alarm System
 
-The desktop application uses Tkinter for the interface and PySerial for communication with the Arduino.
+The PC radar uses distance zones to classify detections:
 
-Install the dependency:
+- **≤ 30 cm:** Critical / danger zone
+- **≤ 50 cm:** Warning zone
+- **> 50 cm:** Normal detection
 
-```bash
-pip install -r requirements.txt
-```
+Tracked targets can also be classified as **STATIONARY**, **APPROACHING**, **FAST APPROACH**, or **MOVING AWAY** based on changes in measured distance.
 
-Then run:
-
-```bash
-python radar.py
-```
-
-The current PC configuration expects the Arduino on **COM6** at **115200 baud**.
-
-> Close Arduino Serial Monitor or any other program using COM6 before starting the Python application.
-
-## How It Works
-
-1. The servo rotates the HC-SR04 through the configured scan range.
-2. At each angle, the ultrasonic sensor takes three readings and averages valid results.
-3. Arduino sends `angle,distance` measurements over USB serial.
-4. Python receives the measurements and renders the radar display.
-5. The software groups nearby sequential detections into persistent target tracks.
-6. Targets are assigned IDs and their movement is estimated from distance changes.
-7. Close targets trigger warning/critical states and an audible PC alarm.
-8. The operator can pause, resume, adjust the scan, or lock the servo onto a target.
-
-## Important Limitation
+## ⚠️ Important Limitation
 
 This is **not a true multi-target radar sensor**. The HC-SR04 measures one direction at a time while the servo sweeps. Multiple-target tracking is a software interpretation of sequential measurements, so targets that are close together can sometimes merge or create separate tracks.
 
 The current system is also **local**: the Arduino is connected to the PC by USB. Remote phone monitoring would require a Wi-Fi-capable device such as an ESP32 and an internet-accessible dashboard.
 
-## Project Status
-
-Current milestone: **functional desktop ultrasonic radar/security prototype**.
-
-Next planned evolution:
+## 🚀 Future Development
 
 - ESP32 Wi-Fi connectivity
 - Remote phone dashboard
@@ -125,7 +185,22 @@ Next planned evolution:
 - Better target tracking
 - Event logging and scan statistics
 - More robust alarm acknowledgement and lock management
+- Improved physical enclosure/mounting
 
-## License
+## 📚 Learning Goals
+
+This project combines practical concepts from:
+
+- Arduino programming
+- Embedded systems
+- Ultrasonic sensing
+- Servo motor control
+- Serial communication
+- Python GUI development
+- Real-time data visualization
+- Basic target tracking
+- Alarm/security system design
+
+## 📄 License
 
 This project is currently provided as a personal DIY/learning project.
