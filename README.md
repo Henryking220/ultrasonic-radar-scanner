@@ -17,9 +17,11 @@ The radar is built as a simple, no-solder breadboard prototype. The HC-SR04 is m
 
 ## 🎥 Project Demo
 
-A full demonstration video has been recorded and will be linked here once it is hosted externally. The original video is approximately **600 MB**, so it is kept outside the GitHub repository rather than adding it as a normal repository file.
+The full project demonstration is available on YouTube.
 
-**Full demo:** Coming soon
+▶️ **[Watch the Full Demo on YouTube](https://youtu.be/XmJOcAPssGY)**
+
+The video demonstrates the physical radar build and its scanning operation. The original video is approximately **600 MB**, so it is hosted externally rather than stored directly in the GitHub repository.
 
 ## ✨ Features
 
